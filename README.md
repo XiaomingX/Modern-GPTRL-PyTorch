@@ -1,21 +1,74 @@
-# GPT-2
+# GPT-2 & RL Architecture Deep Dive (Chinese Edition)
 
-来自论文《语言模型是无监督多任务学习者》（["Language Models are Unsupervised Multitask Learners"](https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf)）的代码和模型。
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-你可以通过我们的[原始博客文章](https://openai.com/research/better-language-models/)、[6个月后续文章](https://openai.com/blog/gpt-2-6-month-follow-up/)和[最终文章](https://www.openai.com/blog/gpt-2-1-5b-release/)了解GPT-2及其分阶段发布过程。
+## 🚀 项目使命：弥合算法理论与工程实践的鸿沟
 
-我们还[发布了一个数据集](https://github.com/openai/gpt-2-output-dataset)，供研究人员研究其行为。
+本项目是一个专为中文开发者设计的**深度学习与强化学习算法全栈实验室**。我们通过对 **GPT-2**、**RLHF**、**MuZero** 以及 **Alignment (GRPO, Weak-to-Strong)** 等前沿算法的现代化 PyTorch 重构，旨在提供一个“所见即所得”的学习与研究基准。
 
-<sup>*</sup> *注意：由于一个错误，我们最初的参数数量统计有误（在之前的博客文章和论文中）。因此，你可能看到过小型模型被称为117M，中型模型被称为345M。*
+### 核心差异化价值
+- **全栈重构**: 彻底告别不再维护的 TensorFlow 1.x / JAX 遗留代码，全面拥抱 **PyTorch 2.x** 生态。
+- **理论实战闭环**: 每一行核心逻辑都配有详尽的**中文注释**，直接对应论文中的数学公式。
+- **对齐技术前瞻**: 率先集成了 **GRPO (DeepSeek)**、**Weak-to-Strong (OpenAI)** 等 LLM 对齐关键算法。
+- **现代化基础设施**: 采用 `uv` 进行闪电级的包管理，基于 `Gymnasium` 的标准化 RL 环境接口。
 
-## 使用方法
+---
 
-本仓库旨在作为研究人员和工程师实验GPT-2的起点。
+## 🗺️ 算法全景图
 
-基础信息请参见我们的[模型卡片](./model_card.md)。
+### 1. 语言模型基石 (LLM Foundations)
+| 模块 | 核心技术 | 路径 |
+| :--- | :--- | :--- |
+| **GPT-2** | BPE 分词、Transformer Decoder、中文优化 | [`./GPT-2`](./GPT-2) |
+| **MiniMind** | **MoE (混合专家)**、RoPE、RMSNorm、Llama 风格架构 | [`./unlabel/minimind`](./unlabel/minimind) |
 
-### 一些注意事项
+### 2. 强化学习演进 (RL Evolution)
+- **策略梯度系**: [PPO (Clip版)](./ppo) · [TRPO (信任区域)](./trpo) · [A2C (优势演员)](./a2c)
+- **值函数系**: [DQN (Target网络)](./deepq) · [Q-Learning](./q-learning)
+- **连续控制系**: [DDPG](./ddpg) · [TD3 (双延迟)](./ddpg)
+- **高阶RL研究**:
+    - **[MuZero](./muzero)**: 结合隐空间动力学模型与 MCTS 的模型驱动 RL。
+    - **[ACKTR](./acktr)**: 基于 **K-FAC** 的自然梯度二阶优化。
+    - **[MA-DDPG](./maddpg)**: 多智能体协作与对抗博弈。
+    - **[HER](./her)**: 针对稀疏奖励的后验经验回放。
 
-- GPT-2模型的鲁棒性和最坏情况行为尚未被充分理解。与任何机器学习模型一样，需针对你的使用场景仔细评估GPT-2，尤其是在未经过微调的情况下，或在可靠性至关重要的安全关键型应用中使用时。
-- 训练GPT-2模型所用的数据集包含许多带有偏见和事实错误的文本，因此GPT-2模型也可能存在偏见和不准确之处。
-- 为避免样本被误认为是人类撰写的，建议在广泛传播前明确将样本标记为合成内容。我们的模型在细微之处常常不连贯或不准确，这需要人类仔细阅读才能发现。
+### 3. 模型对齐与元学习 (Alignment & Meta)
+- **[GRPO](./grpo)**: DeepSeek 提出的组相对策略优化，彻底移除 Critic 依赖。
+- **[Weak-to-Strong](./weak-to-strong)**: OpenAI 弱监督强模型的超级对齐（Superalignment）实验。
+- **[Meta-Learning](./learning-to-learn)**: LSTM 元优化器，实现“用梯度下降学习梯度下降”。
+- **[SAM](./sam)**: 锐度感知最小化（提高泛化性） & Segment Anything 视觉大模型。
+
+---
+
+## ⚡ 快速开始
+
+### 现代化依赖管理 (推荐)
+本项目强力推荐使用 [uv](https://github.com/astral-sh/uv) 进行高效的虚拟环境管理。
+
+```bash
+# 1. 安装依赖
+uv pip install -r requirements.txt
+
+# 2. 运行算法驱动示例 (以 PPO 为例)
+uv run ppo/train_ppo.py
+```
+
+### Docker 容器化方案
+我们也提供了预配置的 Docker 镜像，支持 CUDA 12.1 加速。
+```bash
+docker build -t gpt2-rl -f Dockerfile.gpu .
+docker run --gpus all -it gpt2-rl
+```
+
+---
+
+## 🛠️ 设计哲学
+1. **模块化与独立性**: 每个算法目录都是一个独立的闭环，减少跨目录依赖，方便拆解学习。
+2. **拒绝“黑盒”**: 核心公式计算处禁止使用过度抽象的第三方库，确保逻辑透明。
+3. **中文语境优化**: 针对中文 GPT 语境优化了 Tokenizer 和样本数据集。
+
+## 🤝 参与与支持
+- **开发者文档**: 查看 [DEVELOPERS.md](./DEVELOPERS.md) 获取贡献指南。
+- **寻求帮助**: 如果对算法推导有疑问，欢迎提交 Issue。
