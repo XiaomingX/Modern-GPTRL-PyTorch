@@ -1,0 +1,33 @@
+[project]
+name = "rl-algorithms"
+version = "1.0.0"
+description = "深度强化学习算法集合 - PyTorch 实现"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.0.0",
+    "gymnasium>=0.29.0",
+    "numpy<2.0",
+    "transformers>=4.30.0",
+    "datasets>=2.14.0",
+    "fire>=0.5.0",
+    "matplotlib>=3.7.0",
+    "regex>=2023.0.0",
+    "requests>=2.31.0",
+    "tqdm>=4.65.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
